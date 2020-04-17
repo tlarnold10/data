@@ -4,6 +4,7 @@ import json
 import pdb
 import pandas as pd 
 import numpy as np
+import matplotlib.pyplot as plt
 
 url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSF&outputsize=full&apikey=1I5ZNRGCLS9VRF96'
 
@@ -21,7 +22,7 @@ div_array = []
 split_array = []
 
 for day in json_data['Time Series (Daily)']:
-    date_array.append(json_data['Time Series (Daily)'][day])
+    date_array.append(day)
     # print('Open: ' + json_data['Time Series (Daily)'][day]['1. open'])
     open_array.append(json_data['Time Series (Daily)'][day]['1. open'])
     # print('High: ' + json_data['Time Series (Daily)'][day]['2. high'])
@@ -51,4 +52,6 @@ data_dict['dividend'] = div_array
 data_dict['split'] = split_array
 
 stock_df = pd.DataFrame(data_dict)
-print(stock_df)
+print(stock_df.head())
+
+stock_df.plot(x='date', y='ad_close')
