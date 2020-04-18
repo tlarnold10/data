@@ -5,8 +5,17 @@ import pdb
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 
-url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&outputsize=full&apikey=1I5ZNRGCLS9VRF96'
+parser = argparse.ArgumentParser(description='Create a chart for a given stock ticker')
+parser.add_argument('--ticker', help='The stock ticker you are wanting to look at.')
+
+args = parser.parse_args()
+
+beginning_url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=' 
+end_url = '&outputsize=full&apikey=1I5ZNRGCLS9VRF96'
+
+url = beginning_url + args.ticker + end_url
 
 response = requests.get(url)
 json_data = response.json()
@@ -41,16 +50,17 @@ for day in json_data['Time Series (Daily)']:
     split_array.append(json_data['Time Series (Daily)'][day]['8. split coefficient'])
 
 data_dict = {}
-data_dict['date'] = date_array 
-data_dict['open'] = open_array
-data_dict['high'] = high_array
-data_dict['low'] = low_array
-data_dict['close'] = close_array
-data_dict['ad_close'] = ad_close_array
-data_dict['volume'] = volume_array
-data_dict['dividend'] = div_array
-data_dict['split'] = split_array
-# pdb.set_trace()
+data_dict['date'] = reversed(date_array) 
+data_dict['open'] = reversed(open_array)
+data_dict['high'] = reversed(high_array)
+data_dict['low'] = reversed(low_array)
+data_dict['close'] = reversed(close_array)
+data_dict['ad_close'] = reversed(ad_close_array)
+data_dict['volume'] = reversed(volume_array)
+data_dict['dividend'] = reversed(div_array)
+data_dict['split'] = reversed(split_array)
 stock_df = pd.DataFrame(data_dict)
 
 stock_df.plot(kind='line',x='date',y='ad_close')
+
+plt.show()
