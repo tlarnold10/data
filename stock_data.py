@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSF&outputsize=full&apikey=1I5ZNRGCLS9VRF96'
+url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&outputsize=full&apikey=1I5ZNRGCLS9VRF96'
 
 response = requests.get(url)
 json_data = response.json()
@@ -32,7 +32,7 @@ for day in json_data['Time Series (Daily)']:
     # print('Clos: ' + json_data['Time Series (Daily)'][day]['4. close'])
     close_array.append(json_data['Time Series (Daily)'][day]['4. close'])
     # print('Adjusted Close: ' + json_data['Time Series (Daily)'][day]['5. adjusted close'])
-    ad_close_array.append(json_data['Time Series (Daily)'][day]['5. adjusted close'])
+    ad_close_array.append(float(json_data['Time Series (Daily)'][day]['5. adjusted close']))
     # print('Volume: ' + json_data['Time Series (Daily)'][day]['6. volume'])
     volume_array.append(json_data['Time Series (Daily)'][day]['6. volume'])
     # print('Dividend Amount: ' + json_data['Time Series (Daily)'][day]['7. dividend amount'])
@@ -50,8 +50,7 @@ data_dict['ad_close'] = ad_close_array
 data_dict['volume'] = volume_array
 data_dict['dividend'] = div_array
 data_dict['split'] = split_array
-
+# pdb.set_trace()
 stock_df = pd.DataFrame(data_dict)
-print(stock_df.head())
 
-stock_df.plot(x='date', y='ad_close')
+stock_df.plot(kind='line',x='date',y='ad_close')
