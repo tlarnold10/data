@@ -9,6 +9,7 @@ import argparse
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split 
 from sklearn import metrics
+from sklearn.preprocessing import PolynomialFeatures 
 
 parser = argparse.ArgumentParser(description='Create a chart for a given stock ticker')
 parser.add_argument('--ticker', help='The stock ticker you are wanting to look at.')
@@ -94,11 +95,11 @@ print(f'Correlation: {correlation}')
 
 # Now let's do it the way we are supposed to do it, 
 # create the model with 80% and use the other 20% for testing
-X_train, X_test, y_train, y_test = train_test_split(stock_df['open'].values.reshape((-1, 1)), 
+x_train, x_test, y_train, y_test = train_test_split(stock_df['open'].values.reshape((-1, 1)), 
                                         stock_df['ad_close'], test_size=0.2, random_state=0)
 regressor = LinearRegression()  
-regressor.fit(X_train, y_train)
-y_pred = regressor.predict(X_test)
+regressor.fit(x_train, y_train)
+y_pred = regressor.predict(x_test)
 prediction_df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
 
 # Get accuracy of the model. 
@@ -109,3 +110,32 @@ print(f'Actual vs. Predicted:\n{prediction_df}')
 print(f'Mean Absolute Error: {metrics.mean_absolute_error(y_test, y_pred)}')  
 print(f'Mean Squared Error: {metrics.mean_squared_error(y_test, y_pred)}')  
 print(f'Root Mean Squared Error: {np.sqrt(metrics.mean_squared_error(y_test, y_pred))}')
+
+# Multiple linear regression 
+# model = LinearRegression().fit(stock_df['open'].values.reshape((-1, 1)), stock_df['ad_close'])
+print(f'\n############################################################')
+print(f'#               Multiple linear regression                 #')
+print(f'############################################################')
+
+
+# Polynomial regression 
+# model = LinearRegression().fit(stock_df['open'].values.reshape((-1, 1)), stock_df['ad_close'])
+print(f'\n############################################################')
+print(f'#                 Polynomial regression                    #')
+print(f'############################################################')
+  
+poly = PolynomialFeatures(degree = 4) 
+X_poly = poly.fit_transform(x_train) 
+  
+poly.fit(X_poly, y_train) 
+lin2 = LinearRegression() 
+lin2.fit(X_poly, y_train) 
+
+plt.scatter(x_train, y_train, color = 'blue') 
+  
+plt.plot(x_train, lin2.predict(poly.fit_transform(x_train)), color = 'red') 
+plt.title('Polynomial Regression') 
+plt.xlabel('Temperature') 
+plt.ylabel('Pressure') 
+  
+plt.show() 
