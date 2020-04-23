@@ -35,6 +35,7 @@ ad_close_array = []
 volume_array = []
 div_array = []
 split_array = []
+periods = []
 
 for day in json_data['Time Series (Daily)']:
     date_array.append(day)
@@ -67,12 +68,17 @@ data_dict['dividend'] = reversed(div_array)
 data_dict['split'] = reversed(split_array)
 stock_df = pd.DataFrame(data_dict)
 
+# Create a new column for the number of periods (days)
+row_count = stock_df.shape[0]
+for i in range(0, row_count):
+    periods.append(i)
+
+stock_df['period'] = periods
 stock_df.plot(kind='line',x='date',y='ad_close')
 
 print(f'\n##################################################################')
 print(f'#             Let\'s get some descriptive statistics              #')
 print(f'##################################################################')
-row_count = stock_df.shape[0]
 print(f'Row Count: {row_count}')
 column_count = stock_df.shape[1]
 print(f'Column Count: {column_count}')
@@ -123,17 +129,19 @@ print(f'############################################################')
 print(f'\n############################################################')
 print(f'#                 Polynomial regression                    #')
 print(f'############################################################')
-  
-poly = PolynomialFeatures(degree = 4) 
-X_poly = poly.fit_transform(x_train) 
-  
-poly.fit(X_poly, y_train) 
-lin2 = LinearRegression() 
-lin2.fit(X_poly, y_train) 
 
-plt.scatter(x_train, y_train, color = 'blue') 
+x = stock_df['period'].values.reshape((-1,1))
+y = stock_df['ad_close']
+poly = PolynomialFeatures(degree = 4) 
+X_poly = poly.fit_transform(x) 
   
-plt.plot(x_train, lin2.predict(poly.fit_transform(x_train)), color = 'red') 
+poly.fit(X_poly, y) 
+lin2 = LinearRegression() 
+lin2.fit(X_poly, y) 
+
+plt.scatter(x, y, color = 'blue') 
+  
+plt.plot(x, lin2.predict(poly.fit_transform(x)), color = 'red') 
 plt.title('Polynomial Regression') 
 plt.xlabel('Temperature') 
 plt.ylabel('Pressure') 
