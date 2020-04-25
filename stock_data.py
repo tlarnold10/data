@@ -90,18 +90,20 @@ plt.ylabel('Adjused Closed')
 plt.show()
 
 # Linear Regression Things 
-model = LinearRegression().fit(stock_df['open'].values.reshape((-1, 1)), stock_df['ad_close'])
+x = stock_df['period'].values.reshape((-1, 1))
+y = stock_df['ad_close']
+model = LinearRegression().fit(x, y)
 print(f'\n############################################################')
 print(f'# Get some of the info about the linear regression testing #')
 print(f'############################################################')
 print(f'Intercept: {model.intercept_}')
 print(f'Coefficient: {model.coef_}')
-correlation = stock_df['ad_close'].corr(stock_df['open'])
+correlation = stock_df['ad_close'].corr(stock_df['period'])
 print(f'Correlation: {correlation}')
 
 # Now let's do it the way we are supposed to do it, 
 # create the model with 80% and use the other 20% for testing
-x_train, x_test, y_train, y_test = train_test_split(stock_df['open'].values.reshape((-1, 1)), 
+x_train, x_test, y_train, y_test = train_test_split(stock_df['period'].values.reshape((-1, 1)), 
                                         stock_df['ad_close'], test_size=0.2, random_state=0)
 regressor = LinearRegression()  
 regressor.fit(x_train, y_train)
@@ -116,6 +118,11 @@ print(f'Actual vs. Predicted:\n{prediction_df}')
 print(f'Mean Absolute Error: {metrics.mean_absolute_error(y_test, y_pred)}')  
 print(f'Mean Squared Error: {metrics.mean_squared_error(y_test, y_pred)}')  
 print(f'Root Mean Squared Error: {np.sqrt(metrics.mean_squared_error(y_test, y_pred))}')
+
+# plot stuff and things
+plt.scatter(x_test, y_test,  color='gray')
+plt.plot(x_test, y_pred, color='red', linewidth=2)
+plt.show()
 
 # Multiple linear regression 
 # model = LinearRegression().fit(stock_df['open'].values.reshape((-1, 1)), stock_df['ad_close'])
