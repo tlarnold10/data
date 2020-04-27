@@ -17,9 +17,11 @@ parser.add_argument('--ticker', help='The stock ticker you are wanting to look a
 args = parser.parse_args()
 
 beginning_url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=' 
-end_url = '&outputsize=full&apikey=1I5ZNRGCLS9VRF96'
+end_url = '&outputsize=full&apikey='
+api_key = open('../config/data_config.txt').read()
 
-url = beginning_url + args.ticker + end_url
+
+url = beginning_url + args.ticker + end_url + api_key
 try:
     response = requests.get(url)
 except:
@@ -124,13 +126,6 @@ plt.scatter(x_test, y_test,  color='gray')
 plt.plot(x_test, y_pred, color='red', linewidth=2)
 plt.show()
 
-# Multiple linear regression 
-# model = LinearRegression().fit(stock_df['open'].values.reshape((-1, 1)), stock_df['ad_close'])
-print(f'\n############################################################')
-print(f'#               Multiple linear regression                 #')
-print(f'############################################################')
-
-
 # Polynomial regression 
 # model = LinearRegression().fit(stock_df['open'].values.reshape((-1, 1)), stock_df['ad_close'])
 print(f'\n############################################################')
@@ -154,3 +149,14 @@ plt.xlabel('Temperature')
 plt.ylabel('Pressure') 
   
 plt.show() 
+
+# Try to figure out if I should buy this stock or not. 
+# Will use the method if a stock goes down for a week strait
+# and the value of the stock goes down by 20% of the current price. 
+past_week = stock_df.tail(5)['ad_close']
+
+res = all(i > j for i, j in zip(past_week, past_week[1:]))
+if res:
+    print(f'Stock price has been going down for 5 days strait')
+else:
+    print(f'Stock prics has NOT been going down for 5 days strait')
