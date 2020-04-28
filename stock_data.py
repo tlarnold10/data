@@ -153,10 +153,17 @@ plt.show()
 # Try to figure out if I should buy this stock or not. 
 # Will use the method if a stock goes down for a week strait
 # and the value of the stock goes down by 20% of the current price. 
-past_week = stock_df.tail(5)['ad_close']
+past_week = stock_df.tail(3)['ad_close']
 
 res = all(i > j for i, j in zip(past_week, past_week[1:]))
-if res:
-    print(f'Stock price has been going down for 5 days strait')
+current_price = past_week[row_count-1]
+last_week_price = past_week[row_count-3]
+if (last_week_price - last_week_price*.2) > current_price:
+    print(f'Stock price has lost 20% of it\'s value in 3 days, you might want to buy this.')
+    if res:
+        print(f'Stock price has been going down for 3 days strait,\
+                definately look into buying meow')
+    else:
+        print(f'Think about it, but has not been going down for the 3 days strait')
 else:
-    print(f'Stock prics has NOT been going down for 5 days strait')
+    print(f'Stock price has NOT lost 20% of it\'s value in 3 days, do not buy this.')
